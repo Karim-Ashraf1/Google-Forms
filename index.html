@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms Clone</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Forms Clone</h1>
+        <div class="auth-section">
+            <div id="loginSection">
+                <input type="text" id="username" placeholder="Username">
+                <input type="password" id="password" placeholder="Password">
+                <button onclick="login()">Login</button>
+                <button onclick="showSignup()">Sign Up</button>
+            </div>
+            <div id="signupSection" style="display: none;">
+                <input type="text" id="newUsername" placeholder="Username">
+                <input type="password" id="newPassword" placeholder="Password">
+                <button onclick="signup()">Create Account</button>
+                <button onclick="showLogin()">Back to Login</button>
+            </div>
+            <div id="userSection" style="display: none;">
+                <span id="welcomeText"></span>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard -->
+        <div id="dashboard" style="display: none;">
+            <div class="dashboard-header">
+                <h2>My Forms</h2>
+                <button onclick="showCreateForm()" class="create-btn">Create New Form</button>
+            </div>
+            <div id="formsList" class="forms-list"></div>
+        </div>
+
+        <!-- Create/Edit Form -->
+        <div id="formBuilder" style="display: none;">
+            <div class="form-builder-header">
+                <input type="text" id="formTitle" placeholder="Form Title" class="form-title-input">
+                <div class="form-actions">
+                    <button onclick="saveForm()" class="save-btn">Save Form</button>
+                    <button onclick="showDashboard()" class="cancel-btn">Cancel</button>
+                </div>
+            </div>
+            <div id="questionsContainer" class="questions-container"></div>
+            <button onclick="addQuestion()" class="add-question-btn">Add Question</button>
+        </div>
+
+        <!-- Form Response View -->
+        <div id="formResponse" style="display: none;">
+            <div class="response-header">
+                <h2 id="responseFormTitle"></h2>
+                <button onclick="showDashboard()" class="back-btn">Back to Dashboard</button>
+            </div>
+            <div id="responseForm" class="response-form"></div>
+            <button onclick="submitResponse()" class="submit-btn">Submit Response</button>
+        </div>
+
+        <!-- View Responses -->
+        <div id="viewResponses" style="display: none;">
+            <div class="responses-header">
+                <h2 id="responsesTitle"></h2>
+                <button onclick="showDashboard()" class="back-btn">Back to Dashboard</button>
+            </div>
+            <div id="responsesList" class="responses-list"></div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

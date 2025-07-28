@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Form - Forms Clone</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Forms Clone</h1>
+        <div class="auth-section">
+            <span>Public Form</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="publicForm">
+            <div class="response-header">
+                <h2 id="publicFormTitle">Loading...</h2>
+            </div>
+            <div id="publicResponseForm" class="response-form"></div>
+            <button onclick="submitPublicResponse()" class="submit-btn">Submit Response</button>
+            <div id="successMessage" style="display: none; text-align: center; color: #34a853; margin-top: 1rem;">
+                <p>Thank you! Your response has been submitted successfully.</p>
+            </div>
+        </div>
+        
+        <div id="formNotFound" style="display: none; text-align: center; padding: 2rem;">
+            <h2>Form Not Found</h2>
+            <p>The form you're looking for doesn't exist or has been removed.</p>
+        </div>
+    </main>
+
+    <script>
+        var currentForm = null;
+        
+        function getFormIdFromUrl() {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+        
+        function loadPublicForm() {
+            var formId = getFormIdFromUrl();
+            if (!formId) {
+                showFormNotFound();
+                return;
+            }
+            
+            // Load forms from localStorage
+            var savedForms = localStorage.getItem('formsForms');
+            if (!savedForms) {
+                showFormNotFound();
+                return;
+            }
+            
+            var forms = JSON.parse(savedForms);
+            var form = null;
+            
+            for (var i = 0; i < forms.length; i++) {
+                if (forms[i].id == formId) {
+                    form = forms[i];
+                    break;
+                }
+            }
+            
+            if (!form) {
+                showFormNotFound();
+                return;
+            }
+            
+            currentForm = form;
+            displayPublicForm();
+        }
+        
+        function showFormNotFound() {
+            document.getElementById('publicForm').style.display = 'none';
+            document.getElementById('formNotFound').style.display = 'block';
+        }
+        
+        function displayPublicForm() {
+            document.getElementById('publicFormTitle').textContent = currentForm.title;
+            
+            var responseForm = document.getElementById('publicResponseForm');
+            responseForm.innerHTML = '';
+            
+            for (var i = 0; i < currentForm.questions.length; i++) {
+                var question = currentForm.questions[i];
+                var questionDiv = document.createElement('div');
+                questionDiv.className = 'response-question';
+                
+                var label = document.createElement('label');
+                label.textContent = question.question;
+                questionDiv.appendChild(label);
+                
+                var input;
+                if (question.type === 'text') {
+                    input = document.createElement('input');
+                    input.type = 'text';
+                } else if (question.type === 'textarea') {
+                    input = document.createElement('textarea');
+                } else if (question.type === 'radio') {
+                    input = document.createElement('div');
+                    input.innerHTML = 
+                        '<label><input type="radio" name="q' + i + '" value="Option 1"> Option 1</label><br>' +
+                        '<label><input type="radio" name="q' + i + '" value="Option 2"> Option 2</label><br>' +
+                        '<label><input type="radio" name="q' + i + '" value="Option 3"> Option 3</label>';
+                } else if (question.type === 'checkbox') {
+                    input = document.createElement('div');
+                    input.innerHTML = 
+                        '<label><input type="checkbox" name="q' + i + '" value="Option 1"> Option 1</label><br>' +
+                        '<label><input type="checkbox" name="q' + i + '" value="Option 2"> Option 2</label><br>' +
+                        '<label><input type="checkbox" name="q' + i + '" value="Option 3"> Option 3</label>';
+                } else if (question.type === 'select') {
+                    input = document.createElement('select');
+                    input.innerHTML = 
+                        '<option value="">Choose an option</option>' +
+                        '<option value="Option 1">Option 1</option>' +
+                        '<option value="Option 2">Option 2</option>' +
+                        '<option value="Option 3">Option 3</option>';
+                }
+                
+                input.setAttribute('data-question-index', i);
+                questionDiv.appendChild(input);
+                responseForm.appendChild(questionDiv);
+            }
+        }
+        
+        function submitPublicResponse() {
+            var responseForm = document.getElementById('publicResponseForm');
+            var questions = responseForm.querySelectorAll('.response-question');
+            var answers = [];
+            
+            for (var i = 0; i < questions.length; i++) {
+                var question = currentForm.questions[i];
+                var answer = '';
+                
+                if (question.type === 'text' || question.type === 'textarea' || question.type === 'select') {
+                    var input = questions[i].querySelector('input, textarea, select');
+                    answer = input.value;
+                } else if (question.type === 'radio') {
+                    var radioInputs = questions[i].querySelectorAll('input[type="radio"]');
+                    for (var j = 0; j < radioInputs.length; j++) {
+                        if (radioInputs[j].checked) {
+                            answer = radioInputs[j].value;
+                            break;
+                        }
+                    }
+                } else if (question.type === 'checkbox') {
+                    var checkboxInputs = questions[i].querySelectorAll('input[type="checkbox"]');
+                    var checkedValues = [];
+                    for (var j = 0; j < checkboxInputs.length; j++) {
+                        if (checkboxInputs[j].checked) {
+                            checkedValues.push(checkboxInputs[j].value);
+                        }
+                    }
+                    answer = checkedValues.join(', ');
+                }
+                
+                answers.push({
+                    question: question.question,
+                    answer: answer
+                });
+            }
+            
+            // Load existing responses
+            var savedResponses = localStorage.getItem('formsResponses');
+            var responses = savedResponses ? JSON.parse(savedResponses) : [];
+            
+            // Save response
+            responses.push({
+                formId: currentForm.id,
+                answers: answers,
+                submitted: new Date().toISOString(),
+                submittedBy: 'Anonymous'
+            });
+            
+            localStorage.setItem('formsResponses', JSON.stringify(responses));
+            
+            // Show success message
+            document.getElementById('publicResponseForm').style.display = 'none';
+            document.querySelector('.submit-btn').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+        }
+        
+        // Initialize when page loads
+        window.onload = function() {
+            loadPublicForm();
+        };
+    </script>
+</body>
+</html>
