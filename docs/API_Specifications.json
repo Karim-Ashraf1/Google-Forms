@@ -1,0 +1,138 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "description": "Local Development Server",
+      "url": "http://localhost:3001"
+    }
+  ],
+  "info": {
+    "version": "1.0.0",
+    "title": "Google Forms Clone API",
+    "description": "A full-stack web application that simulates Google Forms, focusing on core features like dynamic form creation, user responses, and data handling."
+  },
+  "paths": {
+    "/api/auth/signup": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User Registration",
+        "description": "Create a new user account with username and password",
+        "operationId": "signup",
+        "responses": {
+          "200": {
+            "description": "User successfully created"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User Login",
+        "description": "Authenticate user and return user information",
+        "operationId": "login",
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          }
+        }
+      }
+    },
+    "/api/forms": {
+      "get": {
+        "tags": ["Forms"],
+        "summary": "Get User's Forms",
+        "description": "Retrieve all forms created by the authenticated user",
+        "operationId": "listForms",
+        "responses": {
+          "200": {
+            "description": "List of user's forms"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Forms"],
+        "summary": "Create New Form",
+        "description": "Create a new form with questions",
+        "operationId": "createForm",
+        "responses": {
+          "200": {
+            "description": "Form successfully created"
+          }
+        }
+      }
+    },
+    "/api/forms/{id}": {
+      "get": {
+        "tags": ["Forms"],
+        "summary": "Get Form by ID",
+        "description": "Retrieve a specific form by its ID (public endpoint)",
+        "operationId": "getForm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Form ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Form details"
+          }
+        }
+      }
+    },
+    "/api/forms/{id}/response": {
+      "post": {
+        "tags": ["Responses"],
+        "summary": "Submit Form Response",
+        "description": "Submit a response to a form (public endpoint)",
+        "operationId": "submitResponse",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Form ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response successfully submitted"
+          }
+        }
+      }
+    },
+    "/api/forms/{id}/responses": {
+      "get": {
+        "tags": ["Responses"],
+        "summary": "Get Form Responses",
+        "description": "Retrieve all responses for a specific form (form owner only)",
+        "operationId": "viewResponses",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Form ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of form responses"
+          }
+        }
+      }
+    }
+  }
+} 
